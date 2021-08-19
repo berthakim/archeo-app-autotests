@@ -1,0 +1,79 @@
+{% extends "touim/base.html" %}
+{% block sites_active %}active{% endblock %}
+{% block content %}
+<div class="sites-container container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="add-site">
+                {% if user.id %}
+                <a href="{% url 'site_create' %}" style="color: white;">
+                    <button class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; ADD SITE
+                    </button>
+                </a>
+                {% endif %}
+            </div>
+            
+            <h3 class="titre-page">Archaeological sites of Touimada valley</h3>
+            {% if user.username %}
+            <p style="color: #fff;">User: {{ user.username }}</p>
+            {% else %}
+            <p>You are not authentificated</p>
+            {% endif %}
+            <div class="panel panel-default" style="background-color: #11141B; color: gray;">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr style="color: white;">
+                                <th>N°</th>
+                                <th>Name</th>
+                                <th>Periode</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color: white;">
+                            {% for site in sites %}
+                                <tr>
+                                    <td>{{ site.id_site }}</td>
+                                    <td><a href="{% url 'site-detail' site.id_site %}">{{ site.sitename }}</a></td>
+                                    <td>{{ site.periode }}</td>
+                                    <td><img src="{{ site.site_logo.url }}" style="height: 30px;"></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="pagination">
+    <span class="step-links">
+
+        {% if sites.has_previous %}
+            <a class="btn btn-primary mb-4" href="?page=1">First</a>
+            <a class="btn btn-primary mb-4" href="?page={{ sites.previous_page_number }}">previous</a>
+        {% endif %}
+
+        {% for num in sites.paginator.page_range %}
+            {% if sites.number == num %}
+                <a class="active btn btn-default mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > sites.number|add:'-3' and num < sites.number|add:'3' %}
+                <a class="btn btn-primary mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if sites.has_next %}
+            <a class="btn btn-primary mb-4" href="?page={{ sites.next_page_number }}">next</a>
+            <a class="btn btn-primary mb-4" href="?page={{ sites.paginator.num_pages }}">last</a>
+        {% endif %}
+
+        <p><span class="current littleinfo">
+            Page {{ sites.number }} of {{ sites.paginator.num_pages }}
+        </span></p>
+        
+    </span>
+</div>
+</div>
+
+{% endblock content %}
